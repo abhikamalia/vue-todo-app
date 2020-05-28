@@ -23,12 +23,15 @@
                          <input type="text" class="form-control" v-if="!item.checkBoxCheck" :value="item.item" aria-label="Text input with checkbox" aria-describedby="button-addon3" >
                         <input type="text" class="form-control" v-else-if="item.checkBoxCheck" :value="item.item" aria-label="Text input with checkbox" aria-describedby="button-addon3" disabled>
                          <div class="input-group-append ml-5">
-                            <button class="btn btn-outline-danger mr-3"  type="button" id="button-addon3" @click="DeleteFromList(item.id)"> Delete </button>
+                           
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-outline-primary mr-3" data-toggle="modal"  @click="EditTask(item.id , item.item)"  data-target="#exampleModalCenter">
+                              Edit
+                            </button>
+
                             <div >
-                                <button class="btn btn-outline-secondary" type="button" style="width:80px;" id="button-addon3"  disabled> {{ item.category }}</button>
-                            </div> 
-                            <div >
-                                <button class="btn btn-outline-secondary ml-3" v-if="show_all_button" type="button"  id="button-addon3"  disabled> {{ item.date }}</button>
+                            <button class="btn btn-outline-danger mr-3" type="button" id="button-addon3" @click="DeleteFromList(item.id)"> Delete </button>
+                           <button class="btn btn-outline-secondary" type="button" style="width:80px;" id="button-addon3"  disabled> {{ item.category }}</button>
                             </div>     
                         </div>
                     </div>
@@ -83,7 +86,7 @@ export default {
         }
         else{
           this.user = res.data.user
-          this.today = res.data.today.date2
+          this.today = res.data.today
 
         }
         
@@ -182,6 +185,19 @@ export default {
               
 
             }
+        },
+        async EditTask(itemId , item){
+            const url = 'http://localhost:3000/updatetask/'
+            let newTask = prompt('Edit task' , item);
+
+            if (newTask !== null || newTask !== "") {
+              const { data } = await this.$http.post(url , {itemId: itemId , editedTask: newTask});
+              console.log(data);
+              const res = await axios.get('http://localhost:3000/all/books')
+              this.list = res.data.rows
+            } else {
+              console.log('error');
+            } 
         }
     }
 }

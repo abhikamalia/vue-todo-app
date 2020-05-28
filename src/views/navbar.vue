@@ -34,16 +34,15 @@ export default {
         }
     },
     created(){
-        userChangeBus.$on('login' , (user) => {
-            this.user = user
+        userChangeBus.$on('login' , (data) => {
+            this.user = data.user
         })
     },
     async beforeCreate(){
         try{
-            
             const res = await axios.get('http://localhost:3000/' )
             console.log(res.data)
-            if(res.data == 'no_user'){
+            if(res.data.message == 'no_user'){
                 router.push('/login')
             }
             else{
@@ -61,9 +60,9 @@ export default {
     methods: {
         async logout(){
             const res = await axios.get('http://localhost:3000/logout' )
-            this.user = res.data
-            console.log(this.user)
-            if(this.user == ''){
+            this.user = res.data.user
+            // console.log(this.user)
+            if(!this.user){
                 userChangeBus.$emit('logout' , this.user)
                 router.push('/login')
             }

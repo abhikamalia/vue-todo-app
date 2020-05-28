@@ -40,8 +40,8 @@ export default {
         }
     },
     created(){
-      userChangeBus.$on('login' , (user) => {
-          this.user = user
+      userChangeBus.$on('login' , (data) => {
+          this.user = data.user
       })
       userChangeBus.$on('logout' , (user) => {
         this.user = user
@@ -49,16 +49,14 @@ export default {
     },
     async beforeCreate(){
         try{
-            const res = await axios.get('http://localhost:3000/' )
+            const res = await axios.get('http://localhost:3000/')
             console.log(res.data)
-            if(res.data == 'no_user'){
+            if(res.data.message == 'no_user'){
               router.push('/login')
             }
             else{
-              this.user = res.data
+              this.user = res.data.user
             }
-            
-            
             console.log(res.data)
                 
         }catch(e){

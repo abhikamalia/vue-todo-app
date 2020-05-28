@@ -41,9 +41,9 @@ export default {
     },
     async beforeCreate() {
       try{
-        const res = await axios.get('http://localhost:3000/register' )
+        const res = await axios.get('http://localhost:3000/' ) || await axios.get('http://localhost:3000/register' )
         console.log(res.data)
-        if(res.data == 'no_user'){
+        if(res.data.message == 'no_user'){
           router.push('/register')
         }
         else{
@@ -60,12 +60,12 @@ export default {
             console.log(this.email , this.password , this.confirmpassword)
             const { data } = await this.$http.post('http://localhost:3000/register' , {email: this.email , password: this.password , confirmpassword: this.confirmpassword})
             console.log(data)
-            if(data.message === 'success'){
+            if(data.message === 'logged_in'){
 
-              userChangeBus.$emit('login' , data.user)
+              userChangeBus.$emit('login' , data)
               router.push('/')
             }
-            this.msg = data
+            this.msg = data.message
 
           //  if(data === '' || data === undefined){
           //      router.push('/login')

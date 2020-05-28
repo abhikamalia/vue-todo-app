@@ -37,11 +37,16 @@
                        
                         <input type="text" class="form-control" v-if="!item.checkBoxCheck"  :value="item.item" aria-label="Text input with checkbox" aria-describedby="button-addon3" >
                         <input type="text" class="form-control" v-else-if="item.checkBoxCheck" :value="item.item" aria-label="Text input with checkbox" aria-describedby="button-addon3" disabled>
-                         <div class="input-group-append ml-5">
                          
-                            <button class="btn btn-outline-danger mr-3" type="button" id="button-addon3" @click="DeleteFromList(item.id)"> Delete </button>
-                             
+                         <div class="input-group-append ml-5">
+                           
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-outline-primary mr-3" data-toggle="modal"  @click="EditTask(item.id , item.item)"  data-target="#exampleModalCenter">
+                              Edit
+                            </button>
+
                             <div >
+                            <button class="btn btn-outline-danger mr-3" type="button" id="button-addon3" @click="DeleteFromList(item.id)"> Delete </button>
                            <button class="btn btn-outline-secondary" type="button" style="width:80px;" id="button-addon3"  disabled> {{ item.category }}</button>
                        </div>
                         </div>
@@ -85,6 +90,7 @@ export default {
             today: '',
             checkboxValue: false,
             empty_message: "No tasks to do today yet...Have a nice day..:)",
+            
           
             
         }
@@ -92,8 +98,8 @@ export default {
   async beforeCreate(){
     try{
         const res = await axios.get('http://localhost:3000/' )
-        console.log(res.data)
-        if(res.data == 'no_user'){
+        console.log(res.data.message)
+        if(res.data.message == 'no_user'){
           router.push('/login')
         }
         else{
@@ -118,7 +124,7 @@ export default {
         try{
             const res = await axios.get('http://localhost:3000/' )
             this.list = res.data.rows
-            this.today = res.data.today.date2;
+            this.today = res.data.today;
             console.log(res.data)
             console.log(this.list.length)
             
@@ -155,7 +161,7 @@ export default {
             var year = myDate.getFullYear();
             
             // var current_time = myDate.getHours(),
-            console.log(date + '-' + month + '-' + year)
+            // console.log(date + '-' + month + '-' + year)
             return date + '-' + month + '-' + year;
         },
         async checkboxCheck(itemId){
@@ -169,6 +175,7 @@ export default {
               this.checkboxValue = false
 
           }
+          
           // else if(this.checkboxValue){
           //     this.checkboxValue = false
           //     console.log(this.checkboxValue , itemId)
@@ -178,7 +185,20 @@ export default {
           //     this.list = res.data.rows
           // }
             
-        }
+        },
+        async EditTask(itemId , item){
+            const url = 'http://localhost:3000/updatetask/'
+            let newTask = prompt('Edit task' , item);
+
+            if (newTask !== null || newTask !== "") {
+              const { data } = await this.$http.post(url , {itemId: itemId , editedTask: newTask});
+              console.log(data);
+              const res = await axios.get('http://localhost:3000/')
+              this.list = res.data.rows
+            } else {
+              console.log('error');
+            } 
+          }
     }
 }
 

@@ -67,6 +67,7 @@ export default {
             current_date: this.getDate(),
             today: '',
             checkboxValue: false,
+            empty_message: "No tasks yet...Have a nice day..:)",
 
             
         }
@@ -75,12 +76,12 @@ export default {
     try{
         const res = await axios.get('http://localhost:3000/completedtasks' )
         console.log(res.data)
-        if(res.data == 'no_user'){
+        if(res.data.message == 'no_user'){
           router.push('/login')
         }
         else{
           this.user = res.data.user
-          this.today = res.data.today.date
+          this.today = res.data.today
 
         }
         
